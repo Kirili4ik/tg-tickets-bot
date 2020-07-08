@@ -3,7 +3,7 @@ from enum import Enum
 # bot API-token
 token = '1375486056:AAHUicaESgWGbS5XKsn5GYa9vZkUOZ4A0kI'
 # Для запуска через Heroku ссылка на приложение
-app_link = 'https://powerful-bayou-59070.herokuapp.com/'
+app_link = 'https://glacial-anchorage-14641.herokuapp.com/'
 
 # название БД
 db_file = "my_db.vdb"
