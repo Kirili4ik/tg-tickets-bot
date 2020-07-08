@@ -25,7 +25,7 @@ def set_state(user_id, value):
 def set_long(user_id, value):
     with Vedis(config.db_file) as db:
         try:
-            db[user_id + "1"] = value
+            db[user_id + 1] = value
             return True
         except:
             print('Проблемка с юзером!')
@@ -35,7 +35,7 @@ def set_long(user_id, value):
 def get_long(user_id):
     with Vedis(config.db_file) as db:
         try:
-            return db[user_id + "1"].decode()
+            return db[user_id + 1].decode()
         except KeyError:  # Если такого ключа/пользователя в базе не оказалось
             return "-1"   # Значение по умолчанию-начало диалога
 
@@ -43,7 +43,7 @@ def get_long(user_id):
 def set_freq(user_id, value):
     with Vedis(config.db_file) as db:
         try:
-            db[user_id + "2"] = value
+            db[user_id + 2] = value
             return True
         except:
             print('Проблемка с юзером!')
@@ -53,6 +53,6 @@ def set_freq(user_id, value):
 def get_freq(user_id):
     with Vedis(config.db_file) as db:
         try:
-            return db[user_id + "2"].decode()
+            return db[user_id + 2].decode()
         except KeyError:  # Если такого ключа/пользователя в базе не оказалось
             return "-1"   # Значение по умолчанию-начало диалога
