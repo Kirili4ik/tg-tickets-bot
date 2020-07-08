@@ -281,7 +281,7 @@ def callback_inline(call):
     how_freq = int(dbworker.get_freq(call.message.chat.id))
 
     if how_long > 0 and how_freq > 0:
-        bot.send_message(call.message.chat.id, "Отлично! Теперь я буду проверять кажды(й/e) " + str(how_freq)\
+        bot.send_message(call.message.chat.id, "Отлично! Теперь я буду проверять кажды(й/e) " + str(how_freq) \
                          + " час/часа/часов " + str(how_long) + " день/дня/дней. ")
 
         first_start = time.time()
@@ -291,35 +291,6 @@ def callback_inline(call):
             while time.time() < start + 60 * how_freq:
                 pass
             is_end = cmd_update_internal(call.message)
-
-
-'''# Выбрали футбол
-@bot.message_handler(
-    func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_F.value)
-def long_update(message):
-
-    global how_long, how_freq
-
-    
-
-
-# Выбрали хоккей
-@bot.message_handler(
-    func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_H.value)
-def long_update(message):
-
-    global how_long, how_freq
-
-    first_start = time.time()
-    start = time.time()
-    while start - first_start < how_long * 24 * 3600:
-        start = time.time()
-        while time.time() < start + 60 * how_freq:
-            pass
-        cmd_update_internal(message)
-        is_end = cmd_update_internal(message)
-        if is_end:
-            break'''
 
 
 # "Старт" с любого символа
