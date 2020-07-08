@@ -14,8 +14,7 @@ from flask import Flask, request
 import re
 server = Flask(__name__)
 
-how_long = -1
-how_freq = -1
+
 # вытаскиваем токен бота из файла с конфигурациями
 bot = telebot.TeleBot(config.token)
 
@@ -163,8 +162,10 @@ def cmd_update(message):
 
     if mess != 'Нет билетов':
         bot.send_photo(chat_id=message.chat.id, photo=img_link)
+        return True
 
     bot.send_message(message.chat.id, mess)
+    return False
 
 
 # По команде /info будем выводить то, зачем нужен бот и что он может
@@ -215,8 +216,9 @@ def user_entering_length(message):
     if not message.text.isdigit():
         bot.send_message(message.chat.id, "Напоминаю, что нужно ввести целое число дней.")
         return
-    global how_long
-    how_long = int(message.text)
+
+    # сохраняем в БД long
+    dbworker.set_long(message.chat.id, message.text)
 
     bot.send_message(message.chat.id, "Как часто проверять билеты? Напишите, пожалуйста, количетсво часов.")
 
@@ -231,8 +233,9 @@ def user_entering_length(message):
         bot.send_message(message.chat.id, "Напоминаю, что нужно ввести целое число часов.")
         return
 
-    global how_freq
-    how_freq = int(message.text)
+    # сохраняем в БД freq
+    dbworker.set_freq(message.chat.id, message.text)
+
     bot.send_message(message.chat.id, "Отлично! Отправьте любой смайлик для подтверждения =)")
 
     dbworker.set_state(message.chat.id, config.States.S_TEAM.value)  # делаем смену статуса на вопрос с выбором команды
@@ -271,30 +274,33 @@ def callback_inline(call):
     bot.send_message(call.message.chat.id, "Отлично, я запомню")
     bot.send_photo(chat_id=call.message.chat.id, photo=img_link)
     bot.send_message(call.message.chat.id, "Поверим билеты прямо сейчас!")
-    cmd_update(call.message)
-    if how_freq > 0 and how_long > 0:
+    is_end = cmd_update(call.message)
+
+    # получаем из БД long и freq
+    how_long = int(dbworker.get_long(call.message.chat.id))
+    how_freq = int(dbworker.get_freq(call.message.chat.id))
+
+    if how_long > 0 and how_freq > 0:
         bot.send_message(call.message.chat.id, "Отлично! Теперь я буду проверять кажды(й/e) " + str(how_freq)\
                          + " час/часа/часов " + str(how_long) + " день/дня/дней. ")
 
+        first_start = time.time()
+        start = time.time()
+        while start - first_start < how_long * 24 * 3600 and not is_end:
+            start = time.time()
+            while time.time() < start + 60 * how_freq:
+                pass
+            is_end = cmd_update_internal(call.message)
 
 
-# Выбрали футбол
+'''# Выбрали футбол
 @bot.message_handler(
     func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_F.value)
 def long_update(message):
 
     global how_long, how_freq
 
-    first_start = time.time()
-    start = time.time()
-    is_end = False
-    while start - first_start < how_long * 24 * 3600:
-        start = time.time()
-        while time.time() < start + 60 * how_freq:
-            pass
-        is_end = cmd_update_internal(message)
-        if is_end:
-            break
+    
 
 
 # Выбрали хоккей
@@ -313,7 +319,7 @@ def long_update(message):
         cmd_update_internal(message)
         is_end = cmd_update_internal(message)
         if is_end:
-            break
+            break'''
 
 
 # "Старт" с любого символа
