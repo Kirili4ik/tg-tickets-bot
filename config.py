@@ -1,7 +1,7 @@
 from enum import Enum
 
 # bot API-token
-token = '1375486056:AAHUicaESgWGbS5XKsn5GYa9vZkUOZ4A0kI'
+token = '1251712568:AAEKpw9cSCK4zuARhjj9KyIi1-wtVXRnjH0'
 # Для запуска через Heroku ссылка на приложение
 app_link = 'https://glacial-anchorage-14641.herokuapp.com/'
 
